@@ -63,6 +63,21 @@ namespace PNGChunks
             return _type;
         }
 
+        public String GetKeyword()
+        {
+            byte[] keyword = null;
+            if(GetChunkType().Equals(ChunkType.iTXt)
+                || GetChunkType().Equals(ChunkType.zTXt)
+                || GetChunkType().Equals(ChunkType.tEXt))
+            {
+                int index = Array.FindIndex(_data, 0, _data.Length, x => x.Equals("\0"));
+                keyword = new byte[index];
+                Array.Copy(_data, keyword, index);
+            }
+
+            return keyword!= null? Encoding.UTF8.GetString(keyword) : "";
+        }
+
         public String GetData()
         {
             switch (GetChunkType())
