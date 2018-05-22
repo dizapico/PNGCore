@@ -12,7 +12,11 @@ namespace PNGChunks
 
         public PNG(Stream ImageStream)
         {
-            ChunkFromStream(ImageStream);
+            while(ImageStream.Position < ImageStream.Length)
+            {
+                _chunks.Add(ChunkFromStream(ImageStream));
+            }
+            
         }
 
         public void AddInternationalText(String keyword, String text)
