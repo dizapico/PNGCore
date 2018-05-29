@@ -1,14 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
 
 namespace PNGCore
 {
-    public abstract class Chunk
+    public class ChunkUtilities
     {
-        protected byte[] _type;
-        protected byte[] _data;
+      
 
-        
     }
 }

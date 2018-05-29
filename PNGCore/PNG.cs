@@ -2,16 +2,18 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using PNGCore.Chunks;
 
-namespace PNGChunks
+namespace PNGCore
 {
     public class PNG
     {
         private readonly byte[] _header = new byte[8];
-        private readonly IList<Chunk> _chunks;
+        private readonly IList<Chunk> _chunks = new List<Chunk>();
 
         public PNG(Stream ImageStream)
         {
+            ImageStream.Read(_header, 0, _header.Length);
             while(ImageStream.Position < ImageStream.Length)
             {
                 _chunks.Add(ChunkFromStream(ImageStream));
@@ -31,39 +33,40 @@ namespace PNGChunks
             // 1        (null character)
             // 0+       (text)
 
-            var typeBytes = Encoding.UTF8.GetBytes("iTXt");
-            var keywordBytes = Encoding.UTF8.GetBytes(keyword);
-            var textBytes = Encoding.UTF8.GetBytes(text);
-            var nullByte = BitConverter.GetBytes('\0')[0];
-            var zeroByte = BitConverter.GetBytes(0)[0];
+            //var typeBytes = Encoding.UTF8.GetBytes("iTXt");
+            //var keywordBytes = Encoding.UTF8.GetBytes(keyword);
+            //var textBytes = Encoding.UTF8.GetBytes(text);
+            //var nullByte = BitConverter.GetBytes('\0')[0];
+            //var zeroByte = BitConverter.GetBytes(0)[0];
 
-            var data = new List<byte>();
+            //var data = new List<byte>();
 
-            data.AddRange(keywordBytes);
-            data.Add(nullByte);
-            data.Add(zeroByte);
-            data.Add(zeroByte);
-            data.Add(nullByte);
-            data.Add(nullByte);
-            data.AddRange(textBytes);
+            //data.AddRange(keywordBytes);
+            //data.Add(nullByte);
+            //data.Add(zeroByte);
+            //data.Add(zeroByte);
+            //data.Add(nullByte);
+            //data.Add(nullByte);
+            //data.AddRange(textBytes);
 
-            var chunk = new Chunk(typeBytes, data.ToArray());
+            //var chunk = new Chunk(typeBytes, data.ToArray());
 
-            _chunks.Insert(1, chunk);
+            //_chunks.Insert(1, chunk);
         }
 
         public List<Chunk> GetInternationalText(String Keyword)
         {
-            List<Chunk> aux = new List<Chunk>();
-            foreach (var chunk in _chunks)
-            {
-                if(chunk.GetChunkType().Equals(ChunkType.iTXt) && chunk.GetKeyword().Equals(Keyword))
-                {
-                    aux.Add(chunk);
-                }
-            }
+            //List<Chunk> aux = new List<Chunk>();
+            //foreach (var chunk in _chunks)
+            //{
+            //    if(chunk.GetChunkType().Equals(ChunkType.iTXt) && chunk.GetKeyword().Equals(Keyword))
+            //    {
+            //        aux.Add(chunk);
+            //    }
+            //}
 
-            return aux;
+            //return aux;
+            return null;
         }
 
         private Chunk ChunkFromStream(Stream Stream)
@@ -75,8 +78,17 @@ namespace PNGChunks
 
             //Jump CRC data
             Stream.Seek(4, SeekOrigin.Current);
+            if (Encoding.UTF8.GetString(type).Equals("iTXt"))
+            {
+                return new InternationalTextualDataChunk(data);
+            }
+            else
+            {
+                return null;
+            }
 
-            return new Chunk(type, data);
+
+            //return new InternationalTextualDataChunk(data);
         }
 
         private byte[] ReadBytes(Stream stream, int n)
