@@ -12,9 +12,13 @@ namespace PNGCoreTest
         public void BadgeShouldHaveiTXtBadge()
         {
             FileStream fileStream = new FileStream(@".\Resources\openbadge.png", FileMode.Open);
-            PNG png = new PNG(fileStream);
-            //List<Chunk> badges = png.GetInternationalText("openbadges");
-            //Assert.IsTrue(badges.Count>0);
+            PNG png = new PNG(@".\Resources\openbadge.png");
+            byte[] result = png.ToBytes();
+            
+
+            //File.WriteAllBytes(@".\Resources\openbadgeparami.png", png2.ToBytes());
+            //PNG png = new PNG(fileStream);
+            
 
         }
     }

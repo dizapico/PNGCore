@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PNGCore.Cryptography;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
@@ -16,7 +17,7 @@ namespace PNGCore.Chunks
 
         public InternationalTextualDataChunk(byte[] Data)
         {
-            _type = new byte[] {105,74,88,116};
+            _type = new byte[] {105,84,88,116};
             _data = Data;
             ReadData(Data);
         }
@@ -54,7 +55,7 @@ namespace PNGCore.Chunks
 
             while (!Encoding.ASCII.GetString(new byte[] { Data[index] }).Equals("\0"))
             {
-                LanguageTag += Convert.ToChar(Data[index]);
+                TranslatedKeyword += Convert.ToChar(Data[index]);
                 index++;
             }
             index++;
@@ -67,6 +68,25 @@ namespace PNGCore.Chunks
             
 
         }
+        public override byte[] ToBytes()
+        {
+            List<byte> result = new List<byte>();
+            byte[] length = BitConverter.GetBytes(_data.Length);
+            Array.Reverse(length);
+            result.AddRange(length);
+            result.AddRange(_type);
+            result.AddRange(_data);
 
+            List<byte> listToCrc32 = new List<byte>();
+            listToCrc32.AddRange(_type);
+            listToCrc32.AddRange(_data);
+            var hasher = new Crc32();
+            using (var stream = new MemoryStream(listToCrc32.ToArray()))
+            {
+                result.AddRange(hasher.ComputeHash(stream));
+            }
+
+            return result.ToArray();
+        }
     }
 }

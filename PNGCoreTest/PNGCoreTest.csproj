@@ -23,7 +23,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\PNGCore\PNGCore.csproj" />
+    <Reference Include="PNGCore">
+      <HintPath>..\PNGCore\bin\Debug\netcoreapp2.0\PNGCore.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
 </Project>
