@@ -22,6 +22,18 @@ namespace PNGCore.Chunks
             ReadData(Data);
         }
 
+        public InternationalTextualDataChunk(String Keyword, String Text)
+        {
+            _type = new byte[] { 105, 84, 88, 116 };
+            this.Keyword = Keyword;
+            CompressionFlag = Encoding.ASCII.GetBytes("\0")[0];
+            CompressionMethod = Encoding.ASCII.GetBytes("\0")[0];
+            LanguageTag = null;
+            TranslatedKeyword = null;
+            this.Text = Text;
+            MountData();
+        }
+
         private void ReadData(byte[] Data)
         {
             int index = 0;
@@ -65,8 +77,27 @@ namespace PNGCore.Chunks
                 Text += Convert.ToChar(Data[index]);
                 index++;
             }
-            
+        }
 
+        private void MountData()
+        {
+            List<Byte> data = new List<Byte>();
+            foreach(byte character in Keyword)
+            {
+                data.Add(character);
+            }
+            //Null, CompressionFlag and CompressionMethod
+            data.Add(new Byte());
+            data.Add(new Byte());
+            data.Add(new Byte());
+            //Two null separators between language tag and translated keyword
+            data.Add(new Byte());
+            data.Add(new Byte());
+            foreach(byte character in Text)
+            {
+                data.Add(character);
+            }
+            _data = data.ToArray();
         }
         public override byte[] ToBytes()
         {

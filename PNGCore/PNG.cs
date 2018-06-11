@@ -16,17 +16,7 @@ namespace PNGCore
 
         public PNG(Stream ImageStream)
         {
-            ImageStream.Read(_header, 0, _header.Length);
-            while(ImageStream.Position < ImageStream.Length)
-            {
-                Chunk aux = ChunkFromStream(ImageStream);
-                if(aux != null)
-                {
-                    _chunks.Add(aux);
-                }
-                
-
-            }
+            ReadStreamToChunks(ImageStream);
             
         }
 
@@ -34,14 +24,19 @@ namespace PNGCore
         {
             using (FileStream fileStream = new FileStream(FileName,FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
             {
-                fileStream.Read(_header, 0, _header.Length);
-                while (fileStream.Position < fileStream.Length)
+                ReadStreamToChunks(fileStream);
+            }
+        }
+
+        private void ReadStreamToChunks(Stream ImageStream)
+        {
+            ImageStream.Read(_header, 0, _header.Length);
+            while (ImageStream.Position < ImageStream.Length)
+            {
+                Chunk aux = ChunkFromStream(ImageStream);
+                if (aux != null)
                 {
-                    Chunk aux = ChunkFromStream(fileStream);
-                    if (aux != null)
-                    {
-                        _chunks.Add(aux);
-                    }
+                    _chunks.Add(aux);
                 }
             }
         }
@@ -74,35 +69,19 @@ namespace PNGCore
             _chunks = aux;
         }
 
-        public void AddInternationalText(String keyword, String text)
+        public void AddTextualData(Chunk TextualData)
         {
-            // 1-79     (keyword)
-            // 1        (null character)
-            // 1        (compression flag)
-            // 1        (compression method)
-            // 0+       (language)
-            // 1        (null character)
-            // 0+       (translated keyword)
-            // 1        (null character)
-            // 0+       (text)
-
-            //var typeBytes = Encoding.UTF8.GetBytes("iTXt");
-            //var keywordBytes = Encoding.UTF8.GetBytes(keyword);
-            //var textBytes = Encoding.UTF8.GetBytes(text);
-            //var nullByte = BitConverter.GetBytes('\0')[0];
-            //var zeroByte = BitConverter.GetBytes(0)[0];
-
-            //var data = new List<byte>();
-
-            //data.AddRange(keywordBytes);
-            //data.Add(nullByte);
-            //data.Add(zeroByte);
-            //data.Add(zeroByte);
-            //data.Add(nullByte);
-            //data.Add(nullByte);
-            //data.AddRange(textBytes);
-
-            //var chunk = new Chunk(typeBytes, data.ToArray());
+            if(TextualData.GetType() == typeof(InternationalTextualDataChunk)
+                || TextualData.GetType() == typeof(TextualDataChunk)
+                || TextualData.GetType() == typeof(CompressedTextualDataChunk))
+            {
+                Chunk auxChunk =_chunks.FindLast(chunk => chunk.GetType() == TextualData.GetType());
+                if(auxChunk== null)
+                {
+                    _chunks.Insert(_chunks.Count - 1, TextualData);
+                }
+            }
+            
 
             //_chunks.Insert(1, chunk);
         }

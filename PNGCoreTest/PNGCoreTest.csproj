@@ -7,11 +7,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Resources\openbadge.png" />
+    <None Remove="Resources\pngicon.png" />
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="Resources\openbadge.png">
+    <Content Include="Resources\pngicon.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
